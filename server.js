@@ -1,5 +1,6 @@
 const express = require('express');
 const { sequelize, Author, Book, Genre } = require('./models');
+const author = require('./models/author');
 
 const app = express();
 app.use(express.json());
@@ -41,6 +42,23 @@ app.post('/books', async (req, res) => {
 
     res.status(201).json(book);
 });
+
+app.get('/authors', async (req, res) => {
+    const authors = await Author.findAll({ include: [Book, Genre] });
+    res.json(authors);
+})
+
+app.post("/author/new", async (req, res) => {
+    const author = req.params;
+    const New = await Author.findByPk(author, { include: [New] });
+    res.json(author);
+})
+
+app.get('genres/:genresId/authors', async (req, res) => {
+    const genreId = req.params;
+    const genre = await Genre.findAll(genreId, { include: [Author] });
+    res.json(genre.Author);
+})
 
 const PORT = 3000;
 app.listen(PORT, async () => {
